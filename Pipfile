@@ -9,6 +9,7 @@ verify_ssl = true
 requests = "*"
 web3 = "*"
 gitcoin = "*"
+pytest = "*"
 
 [requires]
 python_version = "3.6"
