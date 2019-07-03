@@ -16,5 +16,8 @@ if args.ens:
 if args.address:
     eth_address = args.address
 
-r = requests.get(f'https://api.aleth.io/v1/accounts/{eth_address}')
-print(w3.fromWei(int(r.json()['data']['attributes']['balance']),'ether'))
+alethio_response = requests.get(f'https://api.aleth.io/v1/accounts/{eth_address}')
+blockscout_response = requests.get('https://blockscout.com/eth/mainnet/api?module=account&action=tokenlist&address='+eth_address)
+print('Ether balance: '+ str(w3.fromWei(int(alethio_response.json()['data']['attributes']['balance']),'ether')))
+for token in blockscout_response.json()['result']:
+    print('Symbol: ' + token['symbol'] + ', Token: ' + token['name'] + ', Amount: ' + str(w3.fromWei(int(token['balance']),'ether')))
