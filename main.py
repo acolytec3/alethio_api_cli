@@ -2,9 +2,6 @@ from ens import ENS
 import argparse
 import alethioApi
 
-import logging
-import sys
-
 parser = argparse.ArgumentParser(description="Learn about an ETH address")
 parser.add_argument('--address', '-a', help='An Ethereum address of the form 0x1a2b3c...')
 parser.add_argument('--provider', help='A preferred web3 HTTP provider for interacting with the blockchain; defaults to infura mainnet', default='https://mainnet.infura.io')
