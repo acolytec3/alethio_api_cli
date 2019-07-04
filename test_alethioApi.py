@@ -75,3 +75,40 @@ class testAlethioApi(unittest.TestCase):
             }]
         }
         assert self.api.getTokenTransfers('0x1')[0]['attributes']['symbol'] == 'VTY'
+
+
+    @patch('alethioApi.requests.get')
+    def test_getContractMessages(self, resp):
+        """Test getContractMessages method of alethioApi class. """
+        resp.return_value.json.return_value = {
+            'data':[{
+                'type': 'ContractMessage',
+                 'id': 'msg:0x557dc410ce83b3d1f5e7e0129f89b3db53d1180ad279c02aa8c3f2aee0a7f35e:2', 
+                 'attributes': {
+                     'blockCreationTime': 1558517007, 
+                     'cmsgIndex': 2,
+                     'cursor': '0x0077271a00ef00002001036ad7427ebe', 
+                     'fee': '0', 
+                     'globalRank': [7808794, 239, 0], 
+                     'msgCallDepth': 1, 
+                     'msgError': False, 
+                     'msgErrorString': '', 
+                     'msgGasLimit': '2300', 
+                     'msgGasUsed': 0, 
+                     'msgPayload': {
+                         'funcName': '', 
+                         'funcSelector': '', 
+                         'funcSignature': '', 
+                         'funcDefinition': '', 
+                         'inputs': [], 
+                         'outputs': [], 
+                         'raw': ''
+                         },
+                    'msgType': 'ValueContractMsg',
+                    'txGasPrice': '11000000000', 
+                    'value': '8000000000000000'
+                    }
+            }
+        ]}
+        assert self.api.getContractMessages('0x1')[0]['type'] == 'ContractMessage'
+        assert self.api.getContractMessages('0x1')[0]['attributes']['msgType'] == 'ValueContractMsg'

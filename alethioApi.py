@@ -49,3 +49,9 @@ class alethioAPI:
         response = requests.get(f'https://api.aleth.io/v1/accounts/{ethAddress}/tokenTransfers')
         logging.info(response.json()['data'])
         return response.json()['data']
+
+    def getContractMessages(self, ethAddress):
+        """Get Smart Contract messages associated with current address. """
+        response = requests.get(f'https://api.aleth.io/v1/contract-messages?filter[account]={ethAddress}')
+        logging.info(response.json()['data'])
+        return response.json()['data']

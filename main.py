@@ -10,6 +10,7 @@ parser.add_argument('--tokens', '-t', help="Flag to show tokens and values assoc
 parser.add_argument('--ethTransfers', '-et', help='Flag to show Ether transfers associated with provided address', action='store_true')
 parser.add_argument('--tokenTransfers','-tt', help='Flag to show token transfers associated with provided address', action='store_true')
 parser.add_argument('--balance', '-b', help='Flag to show current Ether balance of address', action='store_true')
+parser.add_argument('--contractMessages', '-cm', help='Flag to show Smart Contract interactions associated with provided address', action='store_true')
 
 args = parser.parse_args()
 
@@ -37,4 +38,6 @@ if args.ethTransfers:
 if args.tokenTransfers:
     for trxn in api.getTokenTransfers(ethAddress):
         print('Amount: ' + str(api.w3.fromWei(int(trxn['attributes']['value']),'ether')) + ' Token: ' + trxn['attributes']['symbol'])
-
+if args.contractMessages:
+    for trxn in api.getContractMessages(ethAddress):
+        print('Message Type: ' + trxn['attributes']['msgType'] + ' Message to: ' + trxn['relationships']['to']['data']['id'])
