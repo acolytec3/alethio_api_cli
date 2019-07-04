@@ -15,8 +15,8 @@ class testAlethioApi(unittest.TestCase):
         
 
     @patch('alethioApi.requests.get')
-    def test_getERC20Balance(self, resp):
-        """Test getERC20Balance method of alethioApi class. """
+    def test_getTokenBalances(self, resp):
+        """Test getTokenBalances method of alethioApi class. """
         resp.return_value.json.return_value = {'result':[
             {
                 'symbol': 'GTRN', 
@@ -30,9 +30,12 @@ class testAlethioApi(unittest.TestCase):
                     'name': 'OdhavToken', 
                     'decimals': '18', 
                     'contractAddress': '0x30b8d24688991f0f0e6270913182c97a533a85fb', 
-                    'balance': '3777310500000000000000'
+                    'balance': '0'
             }]}
-        assert self.api.getERC20Balances('0x1')[0]['symbol'] == 'GTRN'
+        tokens = self.api.getTokenBalances('0x1')
+        assert tokens[0]['symbol'] == 'GTRN'
+        with self.assertRaises(IndexError):
+            tokens[1]
 
     @patch('alethioApi.requests.get')
     def test_getEthTransactions(self, resp):
