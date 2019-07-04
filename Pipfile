@@ -11,6 +11,7 @@ web3 = "*"
 gitcoin = "*"
 pytest = "*"
 prompt-toolkit = "*"
+sphinx = "*"
 
 [requires]
 python_version = "3.6"
