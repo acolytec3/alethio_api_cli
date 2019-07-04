@@ -35,6 +35,8 @@ class alethioAPI:
         tokensWithBalance = []
         for token in tokens:
             if int(token['balance']) > 0:
+                if token['decimals']:
+                    token['balance'] = self.normalizeValue(token['decimals'],token['balance'])
                 tokensWithBalance.append(token)
         return tokensWithBalance
 
@@ -42,7 +44,10 @@ class alethioAPI:
         """Get Ether transfers associated with current address. """
         response = requests.get(f'https://api.aleth.io/v1/accounts/{ethAddress}/etherTransfers')
         logging.info(response.json()['data'])
-        return response.json()['data']
+        transfers = response.json()['data']
+        for trxn in transfers:
+            trxn['attributes']['total'] = self.normalizeValue('18',trxn['attributes']['total'])
+        return transfers
 
     def getTokenTransfers(self, ethAddress):
         """Get Ether transfers associated with current address. """
@@ -55,3 +60,7 @@ class alethioAPI:
         response = requests.get(f'https://api.aleth.io/v1/contract-messages?filter[account]={ethAddress}')
         logging.info(response.json()['data'])
         return response.json()['data']
+
+    def normalizeValue(self, decimals, value):
+        """Convert a value from a Web3 transaction to an Ether equivalent value and return as a string. """
+        return str(int(value) / 10**int(decimals))

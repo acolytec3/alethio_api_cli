@@ -24,17 +24,13 @@ if args.balance:
     print('Ether balance: '+ str(api.getEthBalance(ethAddress)))
 if args.tokens:
     for token in api.getTokenBalances(ethAddress):
-        if token['decimals']:
-            balance = int(token['balance']) / 10**int(token['decimals'])
-        else:
-            balance = token['balance']
         if token['symbol']:
-            print('Symbol: ' + token['symbol'] + ', Token: ' + token['name'] + ', Amount: ' + str(balance))
+            print('Symbol: ' + token['symbol'] + ', Token: ' + token['name'] + ', Amount: ' + token['balance'])
         else:
-            print('Contract: ' + token['contractAddress'] + ', Amount: ' + balance)
+            print('Contract: ' + token['contractAddress'] + ', Amount: ' + token['balance'])
 if args.ethTransfers:
     for trxn in api.getEthTransfers(ethAddress):
-        print('Amount: ' + str(api.w3.fromWei(int(trxn['attributes']['total']),'ether')))
+        print('Amount: ' + trxn['attributes']['total'])
 if args.tokenTransfers:
     for trxn in api.getTokenTransfers(ethAddress):
         print('Amount: ' + str(api.w3.fromWei(int(trxn['attributes']['value']),'ether')) + ' Token: ' + trxn['attributes']['symbol'])
