@@ -16,7 +16,7 @@ class testAlethioApi(unittest.TestCase):
 
     @patch('alethioApi.requests.get')
     def test_getERC20Balance(self, resp):
-        """Test getERC20Balance method alethioApi class. """
+        """Test getERC20Balance method of alethioApi class. """
         resp.return_value.json.return_value = {'result':[
             {
                 'symbol': 'GTRN', 
@@ -33,3 +33,42 @@ class testAlethioApi(unittest.TestCase):
                     'balance': '3777310500000000000000'
             }]}
         assert self.api.getERC20Balances('0x1')[0]['symbol'] == 'GTRN'
+
+    @patch('alethioApi.requests.get')
+    def test_getEthTransactions(self, resp):
+        """Test getEthTransactions method of alethioApi class. """
+        resp.return_value.json.return_value = {
+            'data': [{
+                'type': 'EtherTransfer',
+                'id': '0x0079c69c004e00004200f7f0b0a20179',
+                'attributes': {
+                    'transferType': 'ContractMessageTransfer',
+                    'value': '4287663873500000512',
+                    'fee': '0',
+                    'total': '4287663873500000512',
+                    'blockCreationTime': 1560839506,
+                    'globalRank': [],
+                    'cursor': '0x0079c69c004e00004200f7f0b0a20179'
+                }
+            }]
+        }
+        assert self.api.getEthTransfers('0x1')[0]['attributes']['value'] == '4287663873500000512'
+
+    @patch('alethioApi.requests.get')
+    def test_gettokenTransactions(self, resp):
+        """Test getTokenTransactions method of alethioApi class. """
+        resp.return_value.json.return_value = {
+            'data':[{
+                'type': 'TokenTransfer',
+                 'id': '0x0078c0b100a6000081019853a8374aa3',
+                 'attributes': {
+                     'blockCreationTime': 1559932370, 
+                     'cursor': '0x0078c0b100a6000081019853a8374aa3', 
+                     'decimals': 18,
+                     'globalRank': [7913649, 166, 0], 
+                     'symbol': 'VTY', 
+                     'value': '2395143740436544241664'
+                     }
+            }]
+        }
+        assert self.api.getTokenTransfers('0x1')[0]['attributes']['symbol'] == 'VTY'
