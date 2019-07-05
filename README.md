@@ -15,7 +15,7 @@ Leverage the Alethio API to explore the Ethereum blockchain from the command Lin
 * `--ethTransfers, -et` -- Print Ether transfers associated with provided address
 * `--tokenTransfers, -tt` -- Print token transfers associated with provided address
 * `--contractMessages, -cm` -- Print smart contract interactions associated with provided address
-* `--logLevl, -ll` -- Set logging level (i.e. DEBUG, INFO, WARNING, etc)
+* `--logLevel, -ll` -- Set logging level (i.e. DEBUG, INFO, WARNING, etc)
 
 ## Interactive Explorer Usage
 

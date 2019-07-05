@@ -67,6 +67,12 @@ class alethioAPI:
         response = self.authRequest(self.token,f'https://api.aleth.io/v1/contract-messages?filter[account]={ethAddress}')
         logging.info(response.json()['data'])
         return response.json()['data']
+    
+    def getTransactionDetails(self, trxnHash):
+        """"Get transaction details associated with a given transaction hash. """
+        response = self.authRequest(self.token, 'https://api.aleth.io/v1/transactions/' + trxnHash)
+        logging.info(response.json()['data'])
+        return response.json()['data']
 
     def normalizeValue(self, decimals, value):
         """Convert a value from a Web3 transaction to an Ether equivalent value and return as a string. """
