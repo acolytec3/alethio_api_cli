@@ -3,16 +3,18 @@ from prompt_toolkit import validation
 from prompt_toolkit import PromptSession
 import alethioApi
 
-api = alethioApi.alethioAPI(loggingLevel='INFO')
+api = alethioApi.alethioAPI(loggingLevel='INFO', token='')
 
 session = PromptSession()
 
 while 1:
-    choice = session.prompt('(a)ddress, (t)ransaction hash')
+    choice = session.prompt('(a)ddress, (t)ransaction hash, (q)uit: ')
     if choice == 'a':
-        ethAddress = session.prompt('Enter address')
+        ethAddress = session.prompt('Enter address: ')
     if choice == 't':
-        trxnHash = session.prompt('Enter transaction hash')
+        trxnHash = session.prompt('Enter transaction hash: ')
+    if choice == 'q':
+        break
     choice = session.prompt('(b)alance, (t)oken balances, (e)ther transfers, (to)ken transfers')
     if choice == 'b':
         print('Ether balance: '+ str(api.getEthBalance(ethAddress)))
