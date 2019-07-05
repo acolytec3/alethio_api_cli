@@ -44,13 +44,6 @@ class alethioAPI:
         transfers = response.json()['data']
         for trxn in transfers:
             trxn['attributes']['total'] = self.normalizeValue('18',trxn['attributes']['total'])
-            if 'links' in trxn: del trxn['links']
-            if 'links' in trxn['relationships']['from']: del trxn['relationships']['from']['links']
-            if 'links' in trxn['relationships']['to']: del trxn['relationships']['to']['links']
-            if 'links' in trxn['relationships']['transaction']: del trxn['relationships']['transaction']['links']
-            if 'links' in trxn['relationships']['contractMessage']: del trxn['relationships']['contractMessage']['links']
-            if 'links' in trxn['relationships']['feeRecipient']: del trxn['relationships']['feeRecipient']['links']
-            if 'links' in trxn['relationships']['block']: del trxn['relationships']['block']['links']
         logging.info(transfers)
         return transfers
 
