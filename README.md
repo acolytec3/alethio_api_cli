@@ -2,14 +2,23 @@
 
 Leverage the Alethio API to explore the Ethereum blockchain from the command Line
 
-## Usage
+## Command Line Interface Usage
 
-* `--ens "alice.eth"` -- Look up the details of an address by the ENS name
-* `--address "0x1234...` -- Look up the details of an Ethereum address
+`python row.py [args]`
+
+### CLI arguments
+
+* `--address "0x1234..." or "alice.eth` -- Look up the details of an Ethereum address 
 * `--provider "https://my.ethereumprovider.com"` -- Specify an Web3 HTTP Provider (defaults to Infura)
 * `--balance, -b` -- Print Ether balance associated with provided address
 * `--tokens, -t` -- Print token balances associated with provided address
+* `--ethTransfers, -et` -- Print Ether transfers associated with provided address
+* `--tokenTransfers, -tt` -- Print token transfers associated with provided address
+* `--contractMessages, -cm` -- Print smart contract interactions associated with provided address
 
+## Interactive Explorer Usage
+
+`python interactive-explorer.py`
 
 ## Roadmap
 
