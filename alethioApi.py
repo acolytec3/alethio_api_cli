@@ -24,8 +24,10 @@ class alethioAPI:
     def getTokenBalances(self, ethAddress):
         """ Get token balances for current address. Note: This function does not return tokens with a zero balance. """
         ethAddress = self.validateAddress(ethAddress)
-        response = self.authRequest(self.token, 'https://blockscout.com/eth/mainnet/api?module=account&action=tokenlist&address='+ethAddress)
+        response = requests.get('https://blockscout.com/eth/mainnet/api?module=account&action=tokenlist&address='+ethAddress)
         logging.info(response.json())
+        if response.json()['status'] != '1':
+            raise Exception('API returned unexpected response')
         tokens = response.json()['result']
         tokensWithBalance = []
         for token in tokens:
