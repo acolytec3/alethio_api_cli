@@ -14,22 +14,16 @@ class alethioAPI:
         logging.basicConfig(stream=sys.stdout, level=logging.getLevelName(loggingLevel))
         self.token = token
     
-    def ENStoEthAddress(self, ens):
-        """ Convert ENS address to standard Ethereum address. """
-        if self.w3.isConnected():
-            ns = ENS.fromWeb3(self.w3)
-            return ns.address(ens)
-        else:
-            raise Exception('Web3 not connected.')
-
     def getEthBalance(self, ethAddress):
         """ Get Ether Balance for current address."""
+        ethAddress = self.validateAddress(ethAddress)
         response = self.authRequest(self.token, f'https://api.aleth.io/v1/accounts/{ethAddress}')
         logging.info(response.json())
         return self.w3.fromWei(int(response.json()['data']['attributes']['balance']),'ether')
 
     def getTokenBalances(self, ethAddress):
         """ Get token balances for current address. Note: This function does not return tokens with a zero balance. """
+        ethAddress = self.validateAddress(ethAddress)
         response = self.authRequest(self.token, 'https://blockscout.com/eth/mainnet/api?module=account&action=tokenlist&address='+ethAddress)
         logging.info(response.json())
         tokens = response.json()['result']
@@ -43,6 +37,7 @@ class alethioAPI:
 
     def getEthTransfers(self, ethAddress):
         """Get Ether transfers associated with current address. """
+        ethAddress = self.validateAddress(ethAddress)
         response = self.authRequest(self.token,f'https://api.aleth.io/v1/accounts/{ethAddress}/etherTransfers')
         transfers = response.json()['data']
         for trxn in transfers:
@@ -59,12 +54,14 @@ class alethioAPI:
 
     def getTokenTransfers(self, ethAddress):
         """Get Ether transfers associated with current address. """
+        ethAddress = self.validateAddress(ethAddress)
         response = self.authRequest(self.token,f'https://api.aleth.io/v1/accounts/{ethAddress}/tokenTransfers')
         logging.info(response.json()['data'])
         return response.json()['data']
 
     def getContractMessages(self, ethAddress):
         """Get Smart Contract messages associated with current address. """
+        ethAddress = self.validateAddress(ethAddress)
         response = self.authRequest(self.token,f'https://api.aleth.io/v1/contract-messages?filter[account]={ethAddress}')
         logging.info(response.json()['data'])
         return response.json()['data']
@@ -76,3 +73,20 @@ class alethioAPI:
     def authRequest(self, token, request):
         """Make GET request to Alethio API using authentication. """
         return requests.get(request, auth=(token,''))
+
+    def validateAddress(self, address):
+        """ Check address and convert to Eth address if ENS address. """
+        if address.find('.eth'):
+            return self.ENStoEthAddress(address)
+        elif address[0:1] == '0x':
+            return address
+        else:
+            raise Exception('Invalid address.  Please provide an ENS address or standard Ethereum address')
+            
+    def ENStoEthAddress(self, ens):
+        """ Convert ENS address to standard Ethereum address. """
+        if self.w3.isConnected():
+            ns = ENS.fromWeb3(self.w3)
+            return ns.address(ens)
+        else:
+            raise Exception('Web3 not connected.')
