@@ -116,3 +116,30 @@ class testAlethioApi(unittest.TestCase):
         ]}
         assert self.api.getContractMessages('0x1')[0]['type'] == 'ContractMessage'
         assert self.api.getContractMessages('0x1')[0]['attributes']['msgType'] == 'ValueContractMsg'
+
+    @patch('alethioApi.requests.get')
+    def test_getTransactionDetails(self, resp):
+        """Test getTransactionDetails method of alethioApi class. """
+        resp.return_value.json.return_value = {
+            'data':{
+                'type': 'Transaction', 
+                'id': '0xfcf03c816ac2f916f14fda251218043e3bfe66ecf72aeaf5140f0e1f5e86fba3', 
+                'attributes': {
+                    'blockCreationTime': 1556286879,
+                    'cursor': '0x0074a0f10033000010009b00bbc20f19', 
+                    'fee': '1388940000000000', 
+                    'firstSeen': 1556286847, 
+                    'globalRank': [7643377, 51, 0], 
+                    'msgError': False, 
+                    'msgErrorString': '', 
+                    'msgGasLimit': '250000', 
+                    'msgPayload': {
+                        'funcName': 'transfer', 
+                        'funcSelector': '0xa9059cbb', 
+                        'funcSignature': 'transfer(address,uint256)', 
+                        'funcDefinition': 'transfer(address to, uint256 value) public nonpayable returns (bool param0)', 
+                    }
+                }
+            }
+        }
+        assert self.api.getTransactionDetails('0x1')['type'] == 'Transaction'
