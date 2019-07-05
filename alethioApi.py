@@ -41,11 +41,8 @@ class alethioAPI:
         """Get Ether transfers associated with current address. """
         ethAddress = self.validateAddress(ethAddress)
         response = self.authRequest(self.token,f'https://api.aleth.io/v1/accounts/{ethAddress}/etherTransfers')
-        transfers = response.json()['data']
-        for trxn in transfers:
-            trxn['attributes']['total'] = self.normalizeValue('18',trxn['attributes']['total'])
-        logging.info(transfers)
-        return transfers
+        logging.info(response.json()['data'])
+        return response.json()['data']
 
     def getTokenTransfers(self, ethAddress):
         """Get Ether transfers associated with current address. """

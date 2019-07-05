@@ -10,9 +10,47 @@ session = PromptSession()
 def trxnDetails():
     """Print transaction details for given transaction. """
     trxnHash = session.prompt('Enter transaction hash: ')
-    print('Transaction details: ' + str(api.getTransactionDetails(trxnHash)['attributes']['msgPayload']['funcName']))
+    trxn = api.getTransactionDetails(trxnHash)
+    print('Transaction Hash: ' + trxn['id'])
+    print('Amount: ' + api.normalizeValue('18',trxn['attributes']['value']))
+    if trxn['attributes']['txGasUsed']: print('Gas used: ' + api.normalizeValue('18',trxn['attributes']['txGasUsed']))
+    if trxn['attributes']['txGasUsed']: print('Fee: ' + api.normalizeValue('18',trxn['attributes']['txGasUsed']))
+    print('From: ' + trxn['relationships']['from']['data']['id'])
+    print('To: ' + trxn['relationships']['to']['data']['id'])
+    if trxn['attributes']['msgPayload']:
+        for key, value in trxn['attributes']['msgPayload'].items():
+            if key in ['funcDefinition', 'funcName','funcSignature','funcSelector','inputs','outputs']:
+                print(str(key) + ": " + str(value))
  
+def printEtherTransaction(trxn):
+    """Print details of an Ethereum transaction in a CLI-friendly version. """
+    print('Transaction Hash: ' + trxn['relationships']['transaction']['data']['id'])
+    print('Amount: ' + api.normalizeValue('18',trxn['attributes']['total']))
+    print('From: ' + trxn['relationships']['from']['data']['id'])
+    print('To: ' + trxn['relationships']['to']['data']['id'])
 
+
+def printTokenTransaction(trxn):
+    """Print details of a token transaction in a CLI-friendly version. """
+    print('Transaction Hash: ' + trxn['relationships']['transaction']['data']['id'])
+    print('Symbol: ' + trxn['attributes']['symbol'])
+    print('Amount: ' + api.normalizeValue(trxn['attributes']['decimals'],trxn['attributes']['value']))
+    print('From: ' + trxn['relationships']['from']['data']['id'])
+    print('To: ' + trxn['relationships']['to']['data']['id'])
+
+def printTransactionSummary(trxn):
+    """Print transaction summary in a CLI-friendly version. """
+    print('Transaction Hash: ' + trxn['id'])
+    print('Amount: ' + api.normalizeValue('18',trxn['attributes']['value']))
+    if trxn['attributes']['txGasUsed']: print('Gas used: ' + api.normalizeValue('18',trxn['attributes']['txGasUsed']))
+    if trxn['attributes']['txGasUsed']: print('Fee: ' + api.normalizeValue('18',trxn['attributes']['txGasUsed']))
+    print('From: ' + trxn['relationships']['from']['data']['id'])
+    print('To: ' + trxn['relationships']['to']['data']['id'])
+    if trxn['attributes']['msgPayload']:
+        for key, value in trxn['attributes']['msgPayload'].items():
+            if key in ['funcDefinition', 'funcName','funcSignature','funcSelector','inputs','outputs']:
+                print(str(key) + ": " + str(value))
+    
 while 1:
     choice = session.prompt('(a)ddress, (t)ransaction hash, (q)uit: ')
     if choice == 'a':
@@ -37,10 +75,10 @@ while 1:
                         print('Contract: ' + token['contractAddress'] + ', Amount: ' + token['balance'])
         if choice == 'e':
             for trxn in api.getEthTransfers(ethAddress):
-                print('Amount: ' + trxn['attributes']['total'])
+                printEtherTransaction(trxn)
         if choice == 'to':
             for trxn in api.getTokenTransfers(ethAddress):
-                print('Amount: ' + str(api.w3.fromWei(int(trxn['attributes']['value']),'ether')) + ' Token: ' + trxn['attributes']['symbol'])
+                printTokenTransaction(trxn)
     elif choice == 't':
         trxnDetails()
     elif choice == 'q':
