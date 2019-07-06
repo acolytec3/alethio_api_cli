@@ -74,7 +74,7 @@ class alethioAPI:
 
     def validateAddress(self, address):
         """ Check address and convert to Eth address if ENS address. """
-        if address.find('.eth'):
+        if address.find('.eth') == True:
             return self.ENStoEthAddress(address)
         elif address[0:1] == '0x':
             return address
