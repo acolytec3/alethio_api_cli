@@ -58,46 +58,57 @@ api = alethioApi.alethioAPI(loggingLevel=loggingLevel, token=token)
 
 while 1:
 
-    choice = session.prompt('(a)ddress, (t)ransaction hash, (q)uit: ')
-    if choice == 'a':
-        address = session.prompt('Enter address: ')
+    cli = Bullet(prompt = 'What do you want to explore?', choices=['address','transaction','quit'])
+    choice = cli.launch()
+    if choice == 'address':
+        cli = Input(prompt = 'Enter address: ', strip=True)
+        address = cli.launch()
         try:
             ethAddress = api.validateAddress(address)
         except:
             print('Invalid address.  Please validate your address and try again.')
             continue
-        choice = session.prompt('(b)alance, (t)oken balances, (e)ther transfers, (to)ken transfers, (c)ontract messages: ')
-        if choice == 'b':
+        cli = Bullet(prompt = 'Which address attribute do you want to see?', choices=['balance','token balances','ether transfers', 'token transfers', 'contract messages'])
+        choice = cli.launch()
+        if choice == 'balance':
             print('Ether balance: '+ str(api.getEthBalance(ethAddress)))
-        if choice == 't':
+        if choice == 'token balances':
             for token in api.getTokenBalances(ethAddress):
+                choices = []
                 if token['symbol']:
                     print('Symbol: ' + token['symbol'] + ', Token: ' + token['name'] + ', Amount: ' + token['balance'])
+                    choices.append(token['symbol'])
                 else:
                     print('Contract: ' + token['contractAddress'] + ', Amount: ' + token['balance'])
-            choice = session.prompt('(s)ee token transfers associated with specific token or (m)ain menu? ')
-            if choice == 's':
-                choice = session.prompt('Please enter the symbol or token address you want to see transfers for: ')
+                    choices.append(token['contractAddress'])
+            print(choices)
+            cli = Bullet(prompt='See token transfers associated with wallet/token or main menu?', choices=['token transfers','main menu'])
+            choice = cli.launch()
+            if choice == 'token transfers':
+                cli = Bullet(prompt = 'Select token from below:', choices=choices)
+                choice = cli.launch()
                 transfers = api.getTokenTransfers(ethAddress)
                 for trxn in transfers:
                     if trxn['attributes']['symbol'] == choice:
                         printTokenTransaction(trxn)
                     elif trxn['relationships']['token']['data']['id'] == choice:
                         printTokenTransaction(trxn)
-        if choice == 'e':
+            else:
+                continue
+        if choice == 'ether transfers':
             for trxn in api.getEthTransfers(ethAddress):
                 printEtherTransaction(trxn)
-        if choice == 'to':
+        if choice == 'token balances':
             for trxn in api.getTokenTransfers(ethAddress):
                 printTokenTransaction(trxn)
-        if choice == 'c':
+        if choice == 'contract messages':
             for trxn in api.getContractMessages(ethAddress):
                 printTransactionSummary(trxn)
-    elif choice == 't':
+    elif choice == 'transaction':
         trxnHash = session.prompt('Enter transaction hash: ')
         trxn = api.getTransactionDetails(trxnHash)
         printTransactionSummary(trxn)
-    elif choice == 'q':
+    elif choice == 'quit':
         break
 
 
