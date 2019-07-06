@@ -25,6 +25,7 @@ def printEtherTransaction(trxn):
     print('Amount: ' + api.normalizeValue('18',trxn['attributes']['total']))
     print('From: ' + trxn['relationships']['from']['data']['id'])
     print('To: ' + trxn['relationships']['to']['data']['id'])
+    print('Transaction block creation time: ' + trxn['attributes']['blockCreationTime'])
 
 
 def printTokenTransaction(trxn):
@@ -34,6 +35,7 @@ def printTokenTransaction(trxn):
     print('Amount: ' + api.normalizeValue(trxn['attributes']['decimals'],trxn['attributes']['value']))
     print('From: ' + trxn['relationships']['from']['data']['id'])
     print('To: ' + trxn['relationships']['to']['data']['id'])
+    print('Transaction block creation time: ' + trxn['attributes']['blockCreationTime'])
 
 def printTransactionSummary(trxn):
     """Print transaction summary in a CLI-friendly version. """
@@ -43,6 +45,7 @@ def printTransactionSummary(trxn):
     if trxn['attributes']['txGasUsed']: print('Fee: ' + api.normalizeValue('18',trxn['attributes']['txGasUsed']))
     print('From: ' + trxn['relationships']['from']['data']['id'])
     print('To: ' + trxn['relationships']['to']['data']['id'])
+    print('Transaction block creation time: ' + trxn['attributes']['blockCreationTime'])
     if trxn['attributes']['msgPayload']:
         for key, value in trxn['attributes']['msgPayload'].items():
             if key in ['funcDefinition', 'funcName','funcSignature','funcSelector','inputs','outputs']:

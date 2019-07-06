@@ -74,9 +74,9 @@ class alethioAPI:
 
     def validateAddress(self, address):
         """ Check address and convert to Eth address if ENS address. """
-        if address.find('.eth') == True:
+        if address.find('.eth') != -1:
             return self.ENStoEthAddress(address)
-        elif address[0:1] == '0x':
+        elif address[0:2] == '0x':
             return address
         else:
             raise Exception('Invalid address.  Please provide an ENS address or standard Ethereum address')
