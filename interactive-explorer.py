@@ -1,31 +1,18 @@
 from prompt_toolkit import prompt
-from prompt_toolkit.validation import Validator
 from prompt_toolkit import PromptSession
 import alethioApi
+from datetime import datetime
+from bullet import Bullet, Input   
 
 
-def trxnDetails():
-    """Print transaction details for given transaction. """
-    trxnHash = session.prompt('Enter transaction hash: ')
-    trxn = api.getTransactionDetails(trxnHash)
-    print('Transaction Hash: ' + trxn['id'])
-    print('Amount: ' + api.normalizeValue('18',trxn['attributes']['value']))
-    if trxn['attributes']['txGasUsed']: print('Gas used: ' + api.normalizeValue('18',trxn['attributes']['txGasUsed']))
-    if trxn['attributes']['txGasUsed']: print('Fee: ' + api.normalizeValue('18',trxn['attributes']['txGasUsed']))
-    print('From: ' + trxn['relationships']['from']['data']['id'])
-    print('To: ' + trxn['relationships']['to']['data']['id'])
-    if trxn['attributes']['msgPayload']:
-        for key, value in trxn['attributes']['msgPayload'].items():
-            if key in ['funcDefinition', 'funcName','funcSignature','funcSelector','inputs','outputs']:
-                print(str(key) + ": " + str(value))
- 
+
 def printEtherTransaction(trxn):
     """Print details of an Ethereum transaction in a CLI-friendly version. """
     print('Transaction Hash: ' + trxn['relationships']['transaction']['data']['id'])
     print('Amount: ' + api.normalizeValue('18',trxn['attributes']['total']))
     print('From: ' + trxn['relationships']['from']['data']['id'])
     print('To: ' + trxn['relationships']['to']['data']['id'])
-    print('Transaction block creation time: ' + trxn['attributes']['blockCreationTime'])
+    print('Transaction block creation time: ' + str(datetime.fromtimestamp(trxn['attributes']['blockCreationTime'])))
 
 
 def printTokenTransaction(trxn):
@@ -35,28 +22,42 @@ def printTokenTransaction(trxn):
     print('Amount: ' + api.normalizeValue(trxn['attributes']['decimals'],trxn['attributes']['value']))
     print('From: ' + trxn['relationships']['from']['data']['id'])
     print('To: ' + trxn['relationships']['to']['data']['id'])
-    print('Transaction block creation time: ' + trxn['attributes']['blockCreationTime'])
+    print('Transaction block creation time: ' + str(datetime.fromtimestamp(trxn['attributes']['blockCreationTime'])))
 
 def printTransactionSummary(trxn):
     """Print transaction summary in a CLI-friendly version. """
     print('Transaction Hash: ' + trxn['id'])
     print('Amount: ' + api.normalizeValue('18',trxn['attributes']['value']))
-    if trxn['attributes']['txGasUsed']: print('Gas used: ' + api.normalizeValue('18',trxn['attributes']['txGasUsed']))
-    if trxn['attributes']['txGasUsed']: print('Fee: ' + api.normalizeValue('18',trxn['attributes']['txGasUsed']))
     print('From: ' + trxn['relationships']['from']['data']['id'])
     print('To: ' + trxn['relationships']['to']['data']['id'])
-    print('Transaction block creation time: ' + trxn['attributes']['blockCreationTime'])
+    print('Transaction block creation time: ' + str(datetime.fromtimestamp(trxn['attributes']['blockCreationTime'])))
     if trxn['attributes']['msgPayload']:
         for key, value in trxn['attributes']['msgPayload'].items():
             if key in ['funcDefinition', 'funcName','funcSignature','funcSelector','inputs','outputs']:
                 print(str(key) + ": " + str(value))
 
 
-api = alethioApi.alethioAPI(loggingLevel='INFO', token='')
+
+
+print('Welcome to the Command-Line Ethereum Blockchain Explorer.')
+cli = Bullet(prompt = 'Please set your preferred logging level', choices = ['DEBUG','INFO','WARNING'])
+loggingLevel = cli.launch()
 
 session = PromptSession()
 
+cli = Bullet(prompt = 'Do you wish to use your Alethio developer API key?', choices=['Yes','No'])
+choice = cli.launch()
+
+if choice == "Yes":
+    cli = Input(prompt = "Enter API key: ")
+    token = cli.launch()
+else:
+    token = ''
+
+api = alethioApi.alethioAPI(loggingLevel=loggingLevel, token=token)
+
 while 1:
+
     choice = session.prompt('(a)ddress, (t)ransaction hash, (q)uit: ')
     if choice == 'a':
         address = session.prompt('Enter address: ')
@@ -65,7 +66,7 @@ while 1:
         except:
             print('Invalid address.  Please validate your address and try again.')
             continue
-        choice = session.prompt('(b)alance, (t)oken balances, (e)ther transfers, (to)ken transfers: ')
+        choice = session.prompt('(b)alance, (t)oken balances, (e)ther transfers, (to)ken transfers, (c)ontract messages: ')
         if choice == 'b':
             print('Ether balance: '+ str(api.getEthBalance(ethAddress)))
         if choice == 't':
@@ -89,8 +90,13 @@ while 1:
         if choice == 'to':
             for trxn in api.getTokenTransfers(ethAddress):
                 printTokenTransaction(trxn)
+        if choice == 'c':
+            for trxn in api.getContractMessages(ethAddress):
+                printTransactionSummary(trxn)
     elif choice == 't':
-        trxnDetails()
+        trxnHash = session.prompt('Enter transaction hash: ')
+        trxn = api.getTransactionDetails(trxnHash)
+        printTransactionSummary(trxn)
     elif choice == 'q':
         break
 

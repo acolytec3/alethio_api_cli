@@ -12,6 +12,7 @@ gitcoin = "*"
 pytest = "*"
 prompt-toolkit = "*"
 sphinx = "*"
+bullet = "*"
 
 [requires]
 python_version = "3.6"

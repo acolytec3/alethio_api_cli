@@ -8,7 +8,7 @@ Leverage the Alethio API to explore the Ethereum blockchain from the command Lin
 
 ### CLI arguments
 
-* `--address "0x1234..."` or `"alice.eth"` -- Look up the details of an Ethereum address 
+* `--address "0x1234..."` or `"alice.eth"` -- Look up the details of an Ethereum address
 * `--provider "https://my.ethereumprovider.com"` -- Specify an Web3 HTTP Provider (defaults to Infura)
 * `--balance, -b` -- Print Ether balance associated with provided address
 * `--tokens, -t` -- Print token balances associated with provided address
@@ -20,6 +20,8 @@ Leverage the Alethio API to explore the Ethereum blockchain from the command Lin
 ## Interactive Explorer Usage
 
 `python interactive-explorer.py`
+
+Follow prompts and explore the blockchain!
 
 ## Roadmap
 
