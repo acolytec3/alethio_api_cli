@@ -51,6 +51,7 @@ if choice == 'Yes':
     loggingLevel = 'INFO'
 else: 
     loggingLevel = 'WARNING'
+    
 cli = Bullet(prompt = 'Do you wish to use your Alethio developer API key?', choices=['Yes','No'])
 choice = cli.launch()
 
