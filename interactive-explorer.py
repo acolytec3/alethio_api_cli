@@ -51,7 +51,7 @@ if choice == 'Yes':
     loggingLevel = 'INFO'
 else: 
     loggingLevel = 'WARNING'
-    
+
 cli = Bullet(prompt = 'Do you wish to use your Alethio developer API key?', choices=['Yes','No'])
 choice = cli.launch()
 
@@ -68,7 +68,7 @@ while 1:
     cli = Bullet(prompt = 'What do you want to explore?', choices=['address','transaction','quit'])
     choice = cli.launch()
     if choice == 'address':
-        cli = Input(prompt = 'Enter address: ', strip=True)
+        cli = Input(prompt = 'Enter address (either Ethereum address or ENS address): ', strip=True)
         address = cli.launch()
         try:
             ethAddress = api.validateAddress(address)
