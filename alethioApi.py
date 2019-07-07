@@ -84,6 +84,22 @@ class alethioAPI:
         """ Convert ENS address to standard Ethereum address. """
         if self.w3.isConnected():
             ns = ENS.fromWeb3(self.w3)
-            return ns.address(ens)
+            address = ns.address(ens)
+            if address != None:
+                return address
+            else:
+                raise Exception('Address cannot be resolved.')
+        else:
+            raise Exception('Web3 not connected.')
+
+    def ethToENS(self, ethAddress):
+        """ Convert Ethereum address to ENS address (if available). """
+        if self.w3.isConnected():
+            ns = ENS.fromWeb3(self.w3)
+            ens = ns.reverse(ethAddress)
+            if ens != None:
+                return ens
+            else:
+                return ethAddress
         else:
             raise Exception('Web3 not connected.')
