@@ -10,7 +10,6 @@ requests = "*"
 web3 = "*"
 gitcoin = "*"
 pytest = "*"
-sphinx = "*"
 bullet = "*"
 
 [requires]
