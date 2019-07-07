@@ -88,7 +88,6 @@ while 1:
                 else:
                     print('Contract: ' + token['contractAddress'] + ', Amount: ' + token['balance'])
                     choices.append(token['contractAddress'])
-            print(choices)
             cli = Bullet(prompt='See token transfers associated with wallet/token or main menu?', choices=['token transfers','main menu'])
             choice = cli.launch()
             if choice == 'token transfers':
@@ -105,6 +104,18 @@ while 1:
         if choice == 'ether transfers':
             for trxn in api.getEthTransfers(ethAddress):
                 printEtherTransaction(trxn)
+            choice = 'Yes'
+            while choice == 'Yes':
+                cli = Bullet(prompt = 'Do you want to see more transactions?', choices=['Yes','No'])
+                choice = cli.launch()
+                if choice == 'Yes':
+                    try:
+                        for trxn in api.getEthTransfers(ethAddress, next='True', past='True'):
+                            printEtherTransaction(trxn)
+                    except:
+                        "No more transactions available."
+                        continue
+
         if choice == 'token transfers':
             for trxn in api.getTokenTransfers(ethAddress):
                 printTokenTransaction(trxn)
