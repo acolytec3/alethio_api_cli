@@ -31,10 +31,9 @@ class alethioAPI:
         tokens = response.json()['result']
         tokensWithBalance = []
         for token in tokens:
-            if int(token['balance']) > 0:
-                if token['decimals']:
-                    token['balance'] = self.normalizeValue(token['decimals'],token['balance'])
-                tokensWithBalance.append(token)
+            if token['decimals']:
+                token['balance'] = self.normalizeValue(token['decimals'],token['balance'])
+            tokensWithBalance.append(token)
         return tokensWithBalance
 
     def getEthTransfers(self, ethAddress):
