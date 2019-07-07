@@ -1,9 +1,7 @@
 import alethioApi
 from datetime import datetime
 from bullet import Bullet, Input   
-
-
-
+ 
 def printEtherTransaction(trxn):
     """Print details of an Ethereum transaction in a CLI-friendly version. """
     print('Transaction Hash: ' + trxn['relationships']['transaction']['data']['id'])
@@ -34,13 +32,25 @@ def printTransactionSummary(trxn):
             if key in ['funcDefinition', 'funcName','funcSignature','funcSelector','inputs','outputs']:
                 print(str(key) + ": " + str(value))
 
+def printTransactionDetail(trxn):
+    """Print every field in a transaction. """
+    for key, value in trxn.items():
+        if key == 'links':
+            continue
+        elif type(value) == dict:
+            printTransactionDetail(value)
+        else:
+            print(str(key)+ ': ' + str(value))
 
 
 
 print('Welcome to the Command-Line Ethereum Blockchain Explorer.')
-cli = Bullet(prompt = 'Please set your preferred logging level', choices = ['DEBUG','INFO','WARNING'])
-loggingLevel = cli.launch()
-
+cli = Bullet(prompt = 'Do you want to see raw API responses with each query?', choices = ['Yes','No'])
+choice = cli.launch()
+if choice == 'Yes':
+    loggingLevel = 'INFO'
+else: 
+    loggingLevel = 'WARNING'
 cli = Bullet(prompt = 'Do you wish to use your Alethio developer API key?', choices=['Yes','No'])
 choice = cli.launch()
 
@@ -94,7 +104,7 @@ while 1:
         if choice == 'ether transfers':
             for trxn in api.getEthTransfers(ethAddress):
                 printEtherTransaction(trxn)
-        if choice == 'token balances':
+        if choice == 'token transfers':
             for trxn in api.getTokenTransfers(ethAddress):
                 printTokenTransaction(trxn)
         if choice == 'contract messages':
@@ -104,7 +114,12 @@ while 1:
         cli = Input(prompt = "Enter transaction hash: ")
         trxnHash = cli.launch()
         trxn = api.getTransactionDetails(trxnHash)
-        printTransactionSummary(trxn)
+        cli = Bullet(prompt = "Print transaction summary or details?", choices = ['Summary','Details'])
+        choice = cli.launch()
+        if choice == 'Summary':
+            printTransactionSummary(trxn)
+        else:
+            printTransactionDetail(trxn)
     elif choice == 'quit':
         break
 
