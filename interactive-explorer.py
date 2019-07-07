@@ -1,5 +1,3 @@
-from prompt_toolkit import prompt
-from prompt_toolkit import PromptSession
 import alethioApi
 from datetime import datetime
 from bullet import Bullet, Input   
@@ -43,8 +41,6 @@ print('Welcome to the Command-Line Ethereum Blockchain Explorer.')
 cli = Bullet(prompt = 'Please set your preferred logging level', choices = ['DEBUG','INFO','WARNING'])
 loggingLevel = cli.launch()
 
-session = PromptSession()
-
 cli = Bullet(prompt = 'Do you wish to use your Alethio developer API key?', choices=['Yes','No'])
 choice = cli.launch()
 
@@ -73,8 +69,8 @@ while 1:
         if choice == 'balance':
             print('Ether balance: '+ str(api.getEthBalance(ethAddress)))
         if choice == 'token balances':
+            choices = []
             for token in api.getTokenBalances(ethAddress):
-                choices = []
                 if token['symbol']:
                     print('Symbol: ' + token['symbol'] + ', Token: ' + token['name'] + ', Amount: ' + token['balance'])
                     choices.append(token['symbol'])
@@ -105,7 +101,8 @@ while 1:
             for trxn in api.getContractMessages(ethAddress):
                 printTransactionSummary(trxn)
     elif choice == 'transaction':
-        trxnHash = session.prompt('Enter transaction hash: ')
+        cli = Input(prompt = "Enter transaction hash: ")
+        trxnHash = cli.launch()
         trxn = api.getTransactionDetails(trxnHash)
         printTransactionSummary(trxn)
     elif choice == 'quit':
