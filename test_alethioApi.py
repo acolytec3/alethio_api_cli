@@ -36,8 +36,8 @@ class testAlethioApi(unittest.TestCase):
                 }]}
         tokens = self.api.getTokenBalances('0x1')
         assert tokens[0]['symbol'] == 'GTRN'
-        with self.assertRaises(IndexError):
-            tokens[1]
+        assert tokens[1]['symbol'] == "ODHAV"
+
 
     @patch('alethioApi.alethioAPI.ENStoEthAddress', ens = 1)
     @patch('alethioApi.requests.get')
@@ -58,7 +58,7 @@ class testAlethioApi(unittest.TestCase):
                 }
             }]
         }
-        assert self.api.getEthTransfers('0x1')[0]['attributes']['value'] == '4287663873500000512'
+        assert self.api.getEthTransfers('0x1')['data'][0]['attributes']['value'] == '4287663873500000512'
 
     @patch('alethioApi.alethioAPI.ENStoEthAddress', ens = 1)
     @patch('alethioApi.requests.get')
@@ -78,7 +78,7 @@ class testAlethioApi(unittest.TestCase):
                      }
             }]
         }
-        assert self.api.getTokenTransfers('0x1')[0]['attributes']['symbol'] == 'VTY'
+        assert self.api.getTokenTransfers('0x1')['data'][0]['attributes']['symbol'] == 'VTY'
 
     @patch('alethioApi.alethioAPI.ENStoEthAddress', ens = 1)
     @patch('alethioApi.requests.get')
@@ -114,8 +114,8 @@ class testAlethioApi(unittest.TestCase):
                     }
             }
         ]}
-        assert self.api.getContractMessages('0x1')[0]['type'] == 'ContractMessage'
-        assert self.api.getContractMessages('0x1')[0]['attributes']['msgType'] == 'ValueContractMsg'
+        assert self.api.getContractMessages('0x1')['data'][0]['type'] == 'ContractMessage'
+        assert self.api.getContractMessages('0x1')['data'][0]['attributes']['msgType'] == 'ValueContractMsg'
 
     @patch('alethioApi.requests.get')
     def test_getTransactionDetails(self, resp):
@@ -142,4 +142,4 @@ class testAlethioApi(unittest.TestCase):
                 }
             }
         }
-        assert self.api.getTransactionDetails('0x1')['type'] == 'Transaction'
+        assert self.api.getTransactionDetails('0x1')['data']['type'] == 'Transaction'
