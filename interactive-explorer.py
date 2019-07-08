@@ -139,15 +139,15 @@ while 1:
         if choice == 'contract messages':
             choices = ['Main menu']
             for trxn in api.getContractMessages(ethAddress)['data']:
-                choices.append(trxn['data']['id'])
+                choices.append(trxn['id'])
                 printTransactionSummary(trxn)
             cli = Bullet(prompt='Select message ID to see log entries associated with this message: ', choices=choices)
             choice = cli.launch()
             if choice == "Main menu":
                 continue
             else:
-                response = api.getLogEntriesForContractMessages(choice)
-                for entry in response.json()['data']:
+                response = api.getLogEntriesForContractMessage(choice)
+                for entry in response['data']:
                     printTransactionDetail(entry)
     elif choice == 'transaction':
         cli = Input(prompt = "Enter transaction hash: ")
