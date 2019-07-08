@@ -13,7 +13,6 @@ class alethioAPI:
         self.w3 = Web3(Web3.HTTPProvider(provider))
         logging.basicConfig(stream=sys.stdout, level=logging.getLevelName(loggingLevel))
         self.token = token
-        self.base_query = {}
     
     def getEthBalance(self, ethAddress):
         """ Get Ether Balance for current address."""
@@ -63,6 +62,12 @@ class alethioAPI:
     def getTransactionDetails(self, trxnHash, **kwargs):
         """"Get transaction details associated with a given transaction hash. """
         response = self.authRequest(self.token, 'https://api.aleth.io/v1/transactions/' + trxnHash)
+        logging.info(response.json())
+        return response.json()
+
+    def getLogEntriesForContractMessage(self, contractMsgID, **kwargs):
+        """"Get log entries produced by executing a given contract message. """
+        response = self.authRequest(self.token, f'https://api.aleth.io/v1/contract-messages/{contractMsgID}/logEntries')
         logging.info(response.json())
         return response.json()
 

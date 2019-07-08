@@ -111,7 +111,7 @@ while 1:
                 choice = cli.launch()
                 if choice == 'Yes':
                     try:
-                        response = api.authRequest('',response['links']['next']).json()
+                        response = api.authRequest(api.token,response['links']['next']).json()
                         print(response)
                         for trxn in response['data']:
                             printEtherTransaction(trxn)
@@ -129,7 +129,7 @@ while 1:
                 choice = cli.launch()
                 if choice == 'Yes':
                     try:
-                        response = api.authRequest('',response['links']['next']).json()
+                        response = api.authRequest(api.token,response['links']['next']).json()
                         print(response)
                         for trxn in response['data']:
                             printEtherTransaction(trxn)
@@ -137,8 +137,18 @@ while 1:
                         "No more transactions available."
                         continue
         if choice == 'contract messages':
+            choices = ['Main menu']
             for trxn in api.getContractMessages(ethAddress)['data']:
+                choices.append(trxn['data']['id'])
                 printTransactionSummary(trxn)
+            cli = Bullet(prompt='Select message ID to see log entries associated with this message: ', choices=choices)
+            choice = cli.launch()
+            if choice == "Main menu":
+                continue
+            else:
+                response = api.getLogEntriesForContractMessages(choice)
+                for entry in response.json()['data']:
+                    printTransactionDetail(entry)
     elif choice == 'transaction':
         cli = Input(prompt = "Enter transaction hash: ")
         trxnHash = cli.launch()
