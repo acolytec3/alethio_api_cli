@@ -13,6 +13,7 @@ class alethioAPI:
         self.w3 = Web3(Web3.HTTPProvider(provider))
         logging.basicConfig(stream=sys.stdout, level=logging.getLevelName(loggingLevel))
         self.token = token
+        self.base_query = {}
     
     def getEthBalance(self, ethAddress):
         """ Get Ether Balance for current address."""
@@ -41,43 +42,29 @@ class alethioAPI:
         ethAddress = self.validateAddress(ethAddress)
         if not kwargs.items():
             response = self.authRequest(self.token,f'https://api.aleth.io/v1/accounts/{ethAddress}/etherTransfers')
-        elif 'next' in kwargs.keys():
-            base_query = self.authRequest(self.token,f'https://api.aleth.io/v1/accounts/{ethAddress}/etherTransfers')
-            logging.info(base_query)
-            if base_query['meta']['hasNext'] == True:
-                response = self.authRequest(self.token, base_query['links']['next']) 
-            else:
-                raise Exception('No additional transactions available.')
-        logging.info(response.json()['data'])
-        return response.json()['data']
+        logging.info(response.json())
+        return response.json()
 
     def getTokenTransfers(self, ethAddress, **kwargs):
         """Get Ether transfers associated with current address. """
         ethAddress = self.validateAddress(ethAddress)
         if not kwargs.items():
             response = self.authRequest(self.token,f'https://api.aleth.io/v1/accounts/{ethAddress}/tokenTransfers')
-        elif 'next' in kwargs.keys():
-            base_query = self.authRequest(self.token,f'https://api.aleth.io/v1/accounts/{ethAddress}/etherTransfers')
-            logging.info(base_query)
-            if base_query['meta']['hasNext'] == 'true':
-                response = self.authRequest(self.token, base_query['links']['next']) 
-            else:
-                raise Exception('No additional transactions available.')
-        logging.info(response.json()['data'])
-        return response.json()['data']
+        logging.info(response.json())
+        return response.json()
 
     def getContractMessages(self, ethAddress, **kwargs):
         """Get Smart Contract messages associated with current address. """
         ethAddress = self.validateAddress(ethAddress)
         response = self.authRequest(self.token,f'https://api.aleth.io/v1/contract-messages?filter[account]={ethAddress}')
-        logging.info(response.json()['data'])
-        return response.json()['data']
+        logging.info(response.json())
+        return response.json()
     
     def getTransactionDetails(self, trxnHash, **kwargs):
         """"Get transaction details associated with a given transaction hash. """
         response = self.authRequest(self.token, 'https://api.aleth.io/v1/transactions/' + trxnHash)
-        logging.info(response.json()['data'])
-        return response.json()['data']
+        logging.info(response.json())
+        return response.json()
 
     def normalizeValue(self, decimals, value):
         """Convert a value from a Web3 transaction to an Ether equivalent value and return as a string. """
@@ -85,6 +72,7 @@ class alethioAPI:
     
     def authRequest(self, token, request):
         """Make GET request to Alethio API using authentication. """
+        logging.info('Request sent to Alethio: ' + request)
         return requests.get(request, auth=(token,''))
 
     def validateAddress(self, address):

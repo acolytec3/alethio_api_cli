@@ -94,7 +94,7 @@ while 1:
                 cli = Bullet(prompt = 'Select token from below:', choices=choices)
                 choice = cli.launch()
                 transfers = api.getTokenTransfers(ethAddress)
-                for trxn in transfers:
+                for trxn in transfers['data']:
                     if trxn['attributes']['symbol'] == choice:
                         printTokenTransaction(trxn)
                     elif trxn['relationships']['token']['data']['id'] == choice:
@@ -102,7 +102,8 @@ while 1:
             else:
                 continue
         if choice == 'ether transfers':
-            for trxn in api.getEthTransfers(ethAddress):
+            response = api.getEthTransfers(ethAddress)
+            for trxn in response['data']:
                 printEtherTransaction(trxn)
             choice = 'Yes'
             while choice == 'Yes':
@@ -110,17 +111,33 @@ while 1:
                 choice = cli.launch()
                 if choice == 'Yes':
                     try:
-                        for trxn in api.getEthTransfers(ethAddress, next='True', past='True'):
+                        response = api.authRequest('',response['links']['next']).json()
+                        print(response)
+                        for trxn in response['data']:
                             printEtherTransaction(trxn)
                     except:
                         "No more transactions available."
                         continue
 
         if choice == 'token transfers':
-            for trxn in api.getTokenTransfers(ethAddress):
+            response = api.getTokenTransfers(ethAddress)
+            for trxn in response['data']:
                 printTokenTransaction(trxn)
+            choice = 'Yes'
+            while choice == 'Yes':
+                cli = Bullet(prompt = 'Do you want to see more transactions?', choices=['Yes','No'])
+                choice = cli.launch()
+                if choice == 'Yes':
+                    try:
+                        response = api.authRequest('',response['links']['next']).json()
+                        print(response)
+                        for trxn in response['data']:
+                            printEtherTransaction(trxn)
+                    except:
+                        "No more transactions available."
+                        continue
         if choice == 'contract messages':
-            for trxn in api.getContractMessages(ethAddress):
+            for trxn in api.getContractMessages(ethAddress)['data']:
                 printTransactionSummary(trxn)
     elif choice == 'transaction':
         cli = Input(prompt = "Enter transaction hash: ")
@@ -129,9 +146,9 @@ while 1:
         cli = Bullet(prompt = "Print transaction summary or details?", choices = ['Summary','Details'])
         choice = cli.launch()
         if choice == 'Summary':
-            printTransactionSummary(trxn)
+            printTransactionSummary(trxn['data'])
         else:
-            printTransactionDetail(trxn)
+            printTransactionDetail(trxn['data'])
     elif choice == 'quit':
         break
 
