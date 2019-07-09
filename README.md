@@ -34,9 +34,9 @@ Leverage the Alethio API to explore the Ethereum blockchain from the command Lin
   ** Enter Uniswap exchange address
   ** Peruse message list
 
-# Alethio API Wrapper
+# Alethio API Wrapper/Client Library
 
-This explorer leverages a python wrapper for the Alethio API that provides access to most
+This is a python wrapper for the Alethio API that provides access to most
 major features of the Alethio API.  The [API documentation](https://api.aleth.io/v1/docs)
 explains the details of each individual field and message type so please refer to those links for details.
 
@@ -58,7 +58,11 @@ explains the details of each individual field and message type so please refer t
 
 * normalizeValue - converts a token value based on the # decimals the token uses in notation (similar to web3.fromWei)
 * authRequest - creates an HTTP GET request that conforms to Alethio API authentication requirements and returns a standard 
-  Python Requests response object
+  [Python Requests](https://2.python-requests.org/en/master/) response object
 * ENStoEthAddress - resolves an ENS address to a standard Ethereum address
 * validateAddress - validates that a provided address conforms to Ethereum address naming standards
 
+## Roadmap
+
+* Add additional messages for additional endpoints (e.g. blocks, tokens)
+* Add additional control over pagination of results returned for Ether-Transfers and Token-Transfers
