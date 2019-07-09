@@ -50,9 +50,27 @@ class alethioAPI:
         logging.info(response.json())
         return response.json()
 
-    def getContractMessages(self, ethAddress):
+    def getContractMessages(self, ethAddress, to=None):
         """Get Smart Contract messages associated with current address. """
         ethAddress = self.validateAddress(ethAddress)
+
+        # Only return contract messages between ethAddress and toAddress
+        if to:  
+            toAddress = self.validateAddress(to)
+            response = self.authRequest(self.token,f'https://api.aleth.io/v1/contract-messages?filter[account]={ethAddress}').json()
+            messages = []
+            for message in response['data']:
+                if (message['relationships']['from']['data']['id'] == toAddress) or (message['relationships']['originator']['data']['id'] == toAddress):
+                    messages.append(message)
+            while response['meta']['page']['hasNext'] == True:
+                response = self.authRequest(self.token,response['links']['next']).json()
+                for message in response['data']:
+                    logging.info(message)
+                    if (message['relationships']['from']['data']['id'] == toAddress) or (message['relationships']['originator']['data']['id'] == toAddress):
+                        messages.append(message)
+            return messages            
+        
+        # Return all contract messages where ethAddress is originator or receiver of message
         response = self.authRequest(self.token,f'https://api.aleth.io/v1/contract-messages?filter[account]={ethAddress}')
         logging.info(response.json())
         return response.json()
