@@ -64,7 +64,6 @@ else:
 api = alethioApi.alethioAPI(loggingLevel=loggingLevel, token=token)
 
 while 1:
-
     cli = Bullet(prompt = 'What do you want to explore?', choices=['address','transaction','quit'])
     choice = cli.launch()
     if choice == 'address':
