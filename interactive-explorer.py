@@ -137,18 +137,46 @@ while 1:
                         "No more transactions available."
                         continue
         if choice == 'contract messages':
-            choices = ['Main menu']
-            for trxn in api.getContractMessages(ethAddress)['data']:
+            choices = []
+            response = api.getContractMessages(ethAddress)
+            for trxn in response['data']:
                 choices.append(trxn['id'])
                 printTransactionSummary(trxn)
-            cli = Bullet(prompt='Select message ID to see log entries associated with this message: ', choices=choices)
-            choice = cli.launch()
-            if choice == "Main menu":
-                continue
+            if response['meta']['page']['hasNext'] == True:
+                choice = "More Transactions"
             else:
+                cli = Bullet(prompt = 'Do you want to see associated log entries for a message or return to main menu?', choices=[
+                    'Log Entries',
+                    'Main Menu'])
+                choice = cli.launch()
+            while choice == "More Transactions":
+                cli = Bullet(prompt = 'Do you want to see more transactions, associated log entries, or return to main menu?', choices=[
+                    'More Transactions',
+                    'Log Entries',
+                    'Main Menu'])
+                choice = cli.launch()
+                if choice == 'More Transactions':
+                    try:
+                        response = api.authRequest(api.token,response['links']['next']).json()
+                        choices = []
+                        for trxn in response['data']:
+                            choices.append(trxn['id'])
+                            printTransactionSummary(trxn)
+                    except:
+                        "No more transactions available."
+                if response['meta']['page']['hasNext'] == False:
+                    cli = Bullet(prompt = 'Do you want to see associated log entries for a message or return to main menu?', choices=[
+                        'Log Entries',
+                        'Main Menu'])
+                    choice = cli.launch()
+            if choice == "Log Entries":
+                cli = Bullet(prompt='Select message ID to see log entries associated with this message: ', choices=choices)
+                choice = cli.launch()
                 response = api.getLogEntriesForContractMessage(choice)
                 for entry in response['data']:
                     printTransactionDetail(entry)
+            else:
+                continue
     elif choice == 'transaction':
         cli = Input(prompt = "Enter transaction hash: ")
         trxnHash = cli.launch()

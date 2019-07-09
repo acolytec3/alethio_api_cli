@@ -36,36 +36,34 @@ class alethioAPI:
             tokensWithBalance.append(token)
         return tokensWithBalance
 
-    def getEthTransfers(self, ethAddress, **kwargs):
+    def getEthTransfers(self, ethAddress):
         """Get Ether transfers associated with current address. """
         ethAddress = self.validateAddress(ethAddress)
-        if not kwargs.items():
-            response = self.authRequest(self.token,f'https://api.aleth.io/v1/accounts/{ethAddress}/etherTransfers')
+        response = self.authRequest(self.token,f'https://api.aleth.io/v1/accounts/{ethAddress}/etherTransfers')
         logging.info(response.json())
         return response.json()
 
-    def getTokenTransfers(self, ethAddress, **kwargs):
+    def getTokenTransfers(self, ethAddress):
         """Get Ether transfers associated with current address. """
         ethAddress = self.validateAddress(ethAddress)
-        if not kwargs.items():
-            response = self.authRequest(self.token,f'https://api.aleth.io/v1/accounts/{ethAddress}/tokenTransfers')
+        response = self.authRequest(self.token,f'https://api.aleth.io/v1/accounts/{ethAddress}/tokenTransfers')
         logging.info(response.json())
         return response.json()
 
-    def getContractMessages(self, ethAddress, **kwargs):
+    def getContractMessages(self, ethAddress):
         """Get Smart Contract messages associated with current address. """
         ethAddress = self.validateAddress(ethAddress)
         response = self.authRequest(self.token,f'https://api.aleth.io/v1/contract-messages?filter[account]={ethAddress}')
         logging.info(response.json())
         return response.json()
     
-    def getTransactionDetails(self, trxnHash, **kwargs):
+    def getTransactionDetails(self, trxnHash):
         """"Get transaction details associated with a given transaction hash. """
         response = self.authRequest(self.token, 'https://api.aleth.io/v1/transactions/' + trxnHash)
         logging.info(response.json())
         return response.json()
 
-    def getLogEntriesForContractMessage(self, contractMsgID, **kwargs):
+    def getLogEntriesForContractMessage(self, contractMsgID):
         """"Get log entries produced by executing a given contract message. """
         response = self.authRequest(self.token, f'https://api.aleth.io/v1/contract-messages/{contractMsgID}/logEntries')
         logging.info(response.json())
@@ -101,14 +99,3 @@ class alethioAPI:
         else:
             raise Exception('Web3 not connected.')
 
-    def ethToENS(self, ethAddress):
-        """ Convert Ethereum address to ENS address (if available). """
-        if self.w3.isConnected():
-            ns = ENS.fromWeb3(self.w3)
-            ens = ns.reverse(ethAddress)
-            if ens != None:
-                return ens
-            else:
-                return ethAddress
-        else:
-            raise Exception('Web3 not connected.')
